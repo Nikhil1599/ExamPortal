@@ -4,6 +4,7 @@ import com.exam.Service.Impl.UserDetailServiceImpl;
 import com.exam.config.JwtUtil;
 import com.exam.entity.JwtRequest;
 import com.exam.entity.JwtResponse;
+import com.exam.entity.User;
 import com.exam.helper.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @CrossOrigin("*")
@@ -55,5 +58,9 @@ public class AuthenticationController {
         } catch (BadCredentialsException e) {
             throw new Exception("Invalid Credentials " + e.getMessage());
         }
+    }
+    @GetMapping("/current-user")
+    public User getCurrentUser(Principal principal){
+        return ((User)this.userDetailsService.loadUserByUsername(principal.getName()));
     }
 }
