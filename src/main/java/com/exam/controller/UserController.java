@@ -4,6 +4,7 @@ import com.exam.Service.UserService;
 import com.exam.entity.Role;
 import com.exam.entity.User;
 import com.exam.entity.UserRole;
+import com.exam.helper.UserFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,8 +20,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-//    @Autowired
-//    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //creating user
     @PostMapping("/")
@@ -28,9 +29,9 @@ public class UserController {
 
 
         user.setProfile("default.png");
-        //encoding password with bcryptpasswordencoder
 
-       // user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
+        //encoding password with bcryptpasswordencoder
+        user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
 
         Set<UserRole> roles = new HashSet<>();
 
@@ -55,4 +56,10 @@ public class UserController {
     public void deleteUser(@PathVariable("userId") Long userId) {
         this.userService.deleteUser(userId);
     }
+
+    @ExceptionHandler(UserFoundException.class)
+    public ResponseEntity<?> exceptionHandler(UserFoundException ex) {
+        return ResponseEntity.ok(ex.getMessage());
+    }
+
 }
